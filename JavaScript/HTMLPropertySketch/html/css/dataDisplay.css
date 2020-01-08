@@ -1,0 +1,55 @@
+#dataDisplayContainer {
+    grid-column-start: 4;
+    grid-column-end: 5;
+}
+
+<<<<<<< HEAD
+table, thead, tbody {
+    display: block;
+    width: 100%;
+    height: 90%;
+    background-color: white;
+}
+
+tr {
+    cursor: default;
+    height: auto;
+    width: 100%;
+    display: flex;
+}
+
+th, td {
+    display: block;
+    width: 25%;
+    height: auto;
+}
+
+.highlight {
+    background: yellow;
+=======
+.parts-table{
+    height: 95%;
+    width: 100%;
+    display: block;
+}
+
+.tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.th {
+    height: 50px;
+    background-color: #e6e6e6;
+    color: black;
+}
+
+.td {
+    padding: 15px;
+    text-align: left;
+}
+
+.parts-table, .th, .td{
+    border: 1px solid black;
+
+>>>>>>> 92c879c433c3f0424352f3b1b81045fc64509b30
+}

@@ -1,0 +1,37 @@
+#appContainer {
+
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: normal;
+
+    height: 100%;
+    padding: inherit;
+}
+
+.ui {
+    /*background-image: linear-gradient(to bottom, LightBlue, DeepSkyBlue);
+
+    border-style: inset;
+    border-color: black;
+    border-width: thick;
+    */
+    height: 95%;
+
+    padding: inherit;
+}
+
+.title-container{
+    text-align: center;
+    font-size: 2em;
+
+}
+
+.container{
+    /*
+    border-style: solid;
+    border-width: medium;
+    border-color: black;
+    border-radius: 5px;
+*/
+    height: 100%;
+}

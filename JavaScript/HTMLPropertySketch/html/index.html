@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+		  name="viewport"
+		  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+		<link rel = "stylesheet" type = "text/css" href = "css/styles.css" />
+		<link rel = "stylesheet" type = "text/css" href = "css/appCont.css" />
+		<link rel = "stylesheet" type = "text/css" href = "css/cadCont.css" />
+		<link rel = "stylesheet" type = "text/css" href = "css/stateCont.css" />
+		<link rel = "stylesheet" type = "text/css" href = "css/controlGroups.css" />
+		<link rel = "stylesheet" type = "text/css" href = "css/dataDisplay.css" />
+		<link rel = "stylesheet" type = "text/css" href = "css/tabCont.css" />
+
+		<!-- <link rel="stylesheet" href="min.css" type="text/css"> -->
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+
+		<title>Sprint 4</title>
+
+
+	</head>
+
+	<body>
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+
+
+		<div id="root">
+			<span class="app-container" id="appContainer">
+				<!-- setup display of the errors as required by OpenJSCAD.js -->
+
+				<div class="canvas-container container" id="canvasContainer">
+					<canvas id="myCanvas" width="700" height="700" style="border:1px solid #000000;"></canvas>
+				</div>
+
+				<div class="state-container container" id="stateContainer">
+					<div class="title-container">Current App State</div>
+					<div class="pan-state state">Panning</div>
+					<div class="draw-state state">Draw Line</div>
+					<div class="curve-state state">Draw Curve</div>
+					<div class="template-state state">Shape template</div>
+					<div class="common-state state">Start Point Edit</div>
+					<div class="translate-state state">Translate</div>
+					<div class="shape-state state">Shape Edit</div>
+					<div class="line-state state">Point Edit</div>
+				</div>
+
+				<div class="control-container ui container" id="controlContainer">
+
+					<ul class="tabs">
+						<li class="tab-link " data-tab="tab-io">I/O</li>
+						<li class="tab-parts " data-tab="tab-parts">Parts</li>
+						<li class="tab-link current" data-tab="tab-edit">Edit</li>
+					</ul>
+
+					<div id="tab-edit" class="tab-content current">
+						<div class="sketch-control-group" id="sketchControlGroup">
+							<span id="translateControl">
+								<span class="guide-container">
+									<div class="guide-text">Edit lines of the selected shape</div>
+									<button id="shapeLabelControl" class="control-button">Change shape label</button>
+									<button id="editModeControl" class="control-button">Edit shape mode</button>
+								</span>
+								<span class="guide-container">
+									<div class="guide-text">For moving one color group</div>
+									<button id="translateModeControl" class="control-button">Translate Shape Mode</button>
+								</span>
+								<span class="guide-container">
+									<div class="guide-text">For moving the whole view</div>
+									<button id="autoZoom" class="control-button">Auto Zoom Canvas</button>
+									<button id="panModeControl" class="control-button">Pan View Mode</button>
+								</span>
+							</span>
+							<span id="drawControl">
+								<span id="stepOne">
+									<span class="guide-container">
+										<div class="guide-text">Do this first</div>
+										<button id="commonPointControl" class="control-button">Set Starting Point (do this first)</button>
+									</span>
+								</span>
+								<span id="stepTwo">
+									<div class="edit-control-holder guide-container" id="editControlHolder">
+										<div class="guide-text">Then use one of these</div>
+										<button id="drawModeControl" class="control-button">Draw Line Mode</button>
+										<button id="templateModeControl" class="control-button">Draw from template</button>
+										<button id="curveBtn" class="control-button">Draw curve[old]</button>
+									</div>
+									<div class="template-holder guide-container" id="templateHolder">
+										<div class="guide-text">Or use one of these</div>
+										<button id="drawCircBtn" class="control-button">Draw Circle</button>
+										<button id="drawRectBtn" class="control-button">Draw Rectangle</button>
+										<button id="drawTriBtn" class="control-button">Draw Triangle</button>
+									</div>
+								</span>
+							</span>
+						</div>
+					</div>
+
+					<div id="tab-parts" class="tab-content">
+						<div class="data-control-group" id="dataDisplayContainer">
+							<table border="1" id= "dataTable">
+								<thead>
+									<tr>
+										<th>LABEL</th>
+										<th>AREA</th>
+										<th>PERIM</th>
+										<th>COLOR</th>
+									</tr>
+								</thead>
+								<tbody id="tableDataSection"/>
+							</table>
+						</div>
+					</div>
+
+					<div id="tab-io" class="tab-content">
+						<div class="io-control-group" id="ioControlGroup">
+							<button id="loadBtn" class="control-button">Load</button>
+							<div class="save-group" id = "saveGroup">
+								<button id="saveBtn" class="control-button">Save</button>
+								<input class="radio save-radio" type="radio" name="saveType" value="legacy"/>
+								<label for="radioLegacy">Legacy Format</label>
+								<input class="radio save-radio" type="radio" name="saveType" value="jscad"/>
+								<label for="radioCAD">OpenJSCAD</label>
+								<input class="radio save-radio" type="radio" name="saveType" value="cart"/>
+								<label for="radioCartesian">Cartesian</label>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</span>
+		</div>
+
+		<script src = "./jsFiles/display/setup.js"></script>
+		<script src = "./jsFiles/display/dataTable.js"></script>
+
+        <script src = "./jsFiles/util/legacyInterface.js"></script>
+		<script src = "./jsFiles/util/globalState.js"></script>
+		<script src = "./jsFiles/util/hitDetection.js"></script>
+		<script src = "./jsFiles/util/convertUnits.js"></script>
+
+        <script src = "./jsFiles/model/sketchBase.js"></script>
+		<script src = "./jsFiles/model/area.js"></script>
+		<script src = "./jsFiles/model/contextSingleton.js"></script>
+
+		<script src = "./jsFiles/model/objects/line.js"></script>
+		<script src = "./jsFiles/model/objects/metadata.js"></script>
+		<script src = "./jsFiles/model/objects/point.js"></script>
+		<script src = "./jsFiles/model/objects/rectangle.js"></script>
+		<script src = "./jsFiles/model/objects/shape.js"></script>
+
+        <script src = "./jsFiles/lib/jquery.min.js"></script>
+
+		<script>
+
+		var globalStateData = new globalState();
+
+		createTabs();
+		createButtons();
+
+		// set up the canvas and some variables
+		var canvas = document.getElementById("myCanvas");
+		// var ctx = canvas.getContext("2d");
+		var ctxHolder = new contextSingleton(canvas.getContext("2d"));
+
+		// listens for keyboard events (complete shape, zoom)
+		document.addEventListener("keypress",
+			function myEventHandler(e){
+				//alert(e.keyCode);
+				var keyCode = e.keyCode;
+				// c or C (complete shape)
+				if(keyCode == 99 | keyCode == 67){
+					var shape = globalStateData.getCurrentWorkingShape();
+
+					// if there are enough points to make a complete shape
+					// > 1 and not > 2 because the starting point isn't counted as an actual point
+					if(shape.getNumPoints() > 1) {
+						shape.addLastLine();
+						globalStateData.addShape(shape)
+						globalStateData.setDrawMode(false);
+						drawShapeObjs();
+					}
+				}
+				// z or Z (zoom in)
+				if(keyCode == 122 | keyCode == 90){
+					globalStateData.zoomIn();
+					drawShapeObjs();
+				}
+				// x or X (zoom out)
+				if(keyCode == 120 | keyCode == 88){
+					if(globalStateData.getZoomDeg() > .7) {
+						globalStateData.zoomOut();
+						drawShapeObjs();
+					}
+
+				}
+			},
+			false
+		);
+
+		$("#myCanvas").mousedown(
+			function(ev){
+
+				var x = ev.clientX - canvas.offsetLeft;
+				var y = ev.clientY - canvas.offsetTop;
+
+				var pixelData = ctxHolder.getContext().getImageData(x, y, 1, 1).data;
+
+				if(globalStateData.getTranslateMode()){
+					if(isBackground(pixelData)){ return; }
+
+					var clickHex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+
+					for(let i = 0; i < globalStateData.getNumShapes(); i++){
+						if(clickHex === globalStateData.getShape(i).metadata.getColor()){
+							globalStateData.setSelectedShape(globalStateData.getShape(i));
+							setTableSelection(i);
+							globalStateData.setTempX(x);
+							globalStateData.setTempY(y);
+						}
+					}
+				}
+				else if(globalStateData.getPanMode()){
+					if(isBackground(pixelData)){
+						globalStateData.setTempX(x);
+						globalStateData.setTempY(y);
+					}
+				}
+				else if(globalStateData.getShapeEditMode()){
+					var shape = getSelectedShape();
+
+					for(let i = 0; i < shape.getNumLines(); i++){
+						var line = shape.getLine(i);
+						if(line.isCurve){
+							if(line.inControlCircle1(new pointObj(x, y))){
+								globalStateData.setLineEditMode(true);
+								globalStateData.setSelectedLine(i);
+								globalStateData.setInC1(true);
+								globalStateData.setTempX(x);
+								globalStateData.setTempY(y);
+								break;
+							}
+							if(line.inControlCircle2(new pointObj(x, y))){
+								globalStateData.setLineEditMode(true);
+								globalStateData.setSelectedLine(i);
+								globalStateData.setInC2(true);
+								globalStateData.setTempX(x);
+								globalStateData.setTempY(y);
+								break;
+							}
+						}
+						if(line.inCircle(new pointObj(x, y))){
+							globalStateData.setLineEditMode(true);
+							globalStateData.setSelectedLine(i);
+							globalStateData.setTempX(x);
+							globalStateData.setTempY(y);
+							break;
+						}
+					}
+				}
+
+
+				globalStateData.setMouseDown(true);
+			}
+		);
+
+		$("#myCanvas").mousemove(
+			function(ev){
+				var x = ev.clientX - canvas.offsetLeft;
+				var y = ev.clientY - canvas.offsetTop;
+
+				if(globalStateData.getTranslateMode() && globalStateData.getMouseDown()){
+					globalStateData.getSelectedShape().incrementAll(
+														x - globalStateData.getTempX(),
+														y - globalStateData.getTempY()
+													);
+					calcAreaPerimCentroid(globalStateData.getSelectedShape());
+					globalStateData.setTempX(x);
+					globalStateData.setTempY(y);
+					drawShapeObjs();
+				}
+				else if(globalStateData.getPanMode() && globalStateData.getMouseDown()){
+					globalStateData.setXOffset(globalStateData.getXOffset() + globalStateData.getTempX() - x);
+					globalStateData.setYOffset(globalStateData.getYOffset() + globalStateData.getTempY() - y);
+
+					globalStateData.setTempX(x);
+					globalStateData.setTempY(y);
+
+					drawShapeObjs();
+				}
+				else if(globalStateData.getShapeEditMode() &&
+						globalStateData.getLineEditMode() &&
+						globalStateData.getMouseDown()
+					){
+					// console.log("moving");
+					if(globalStateData.getInC1()){
+						globalStateData.getSelectedShape().moveC1(
+																x - globalStateData.getTempX(),
+																y - globalStateData.getTempY(),
+																globalStateData.getSelectedLine()
+															);
+						globalStateData.setXOffset(x);
+						globalStateData.setyOffset(y);
+
+						drawShapeObjs();
+					}
+					else if(globalStateData.getInC2()){
+						globalStateData.getSelectedShape().moveC2(
+																x - globalStateData.getTempX(),
+																y - globalStateData.getTempY(),
+																globalStateData.getSelectedLine()
+															);
+						globalStateData.setXOffset(x);
+						globalStateData.setyOffset(y);
+
+						drawShapeObjs();
+					}
+					else{
+						globalStateData.getSelectedShape().movePoint(
+																x - globalStateData.getTempX(),
+																y - globalStateData.getTempY(),
+																globalStateData.getSelectedLine()
+															);
+						globalStateData.setXOffset(x);
+						globalStateData.setyOffset(y);
+
+						drawShapeObjs();
+					}
+				}
+				// console.log(globalStateData.getXOffset() + ", " + globalStateData.getYOffset());
+			}
+		);
+
+		$("#myCanvas").mouseup(
+			function(ev){
+				globalStateData.setMouseDown(false);
+				if(globalStateData.getShapeEditMode()){
+					globalStateData.setLineEditMode(false);
+					globalStateData.setInC1(false);
+					globalStateData.setInC2(false);
+				}
+			}
+		);
+
+		$("#myCanvas").click(
+			function(ev) {
+					var x = ((ev.clientX - canvas.offsetLeft) / globalStateData.getZoomDeg()) - globalStateData.getXOffset();
+					var y = ((ev.clientY - canvas.offsetTop) / globalStateData.getZoomDeg()) - globalStateData.getYOffset();
+
+					checkIfAndSetMostestPoint(x, y);
+
+					var xGrid = snapToGrid(x, globalStateData.getXOffset());
+					var yGrid = snapToGrid(y, globalStateData.getYOffset());
+
+					if(globalStateData.getDrawMode()){
+						var shape = globalStateData.getCurrentWorkingShape();
+
+						if(globalStateData.getCurveMode()){
+							if(globalStateData.getTempPF() == null){
+								globalStateData.setTempPF(new pointObj(xGrid, yGrid));
+							}
+							else if(globalStateData.getTempC1() == null){
+								globalStateData.setTempC1(new pointObj(xGrid, yGrid));
+							}
+							else if(globalStateData.getTempC2() == null){
+								globalStateData.setTempC2(new pointObj(xGrid, yGrid));
+								shape.addCurvedLine(
+										globalStateData.getTempPF(),
+										globalStateData.getTempC1(),
+										globalStateData.getTempC2()
+								);
+								drawShapeObjs();
+							}
+						}
+						else {
+							shape.addStraightLine(new pointObj(xGrid, yGrid));
+							drawShapeObjs();
+						}
+					}
+
+					if(globalStateData.getCommonPointMode()){
+						globalStateData.setCommonShapeStartPoint(new pointObj(xGrid, yGrid));
+						console.log(xGrid, yGrid);
+					}
+			}
+		);
+
+		ctxHolder.drawGrid();
+		// canvas.addEventListener('mouseup', onmouseup, false);
+
+        </script>
+
+	</body>
+
+</html>

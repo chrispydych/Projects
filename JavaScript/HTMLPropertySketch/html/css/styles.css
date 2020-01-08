@@ -1,0 +1,20 @@
+html {
+    min-height: 100%;
+    background-color: DeepSkyBlue;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+
+    border: medium solid DodgerBlue;
+    background-image: linear-gradient(to bottom, LightBlue , DeepSkyBlue);
+}
+
+
+#root {
+
+    height: 100%;
+    width: auto;
+    padding: 1em;
+}

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head><title>Messenger 0.2</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!-- Popper JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+	<script src="hLps://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js"></script>
+<style>
+body {background-color: powderblue;}
+body {color:black}
+h1 {color:black}
+h3 {color:black}
+</style>
+ 	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socketio = io();
+
+		socketio.on("message", function(msg){ 
+			displayMessage(msg);
+			
+		});
+		//listen for authenticated message
+		socketio.on("authenticated", function(){
+			hideLoginScreen();
+			displayChatScreen();
+			displayMessage("Authenticated");
+		});
+		socketio.on("unauthenticated", function(){
+			displayLoginScreen();
+			hideChatScreen();
+			displayError("Unauthenticated user");
+		});
+		// needed to show X is typing
+		socketio.on("typing", function(msg){
+			isTyping(msg);
+		});
+		
+		socketio.on("invalid login", function(msg){
+			displayLoginScreen();
+			hideChatScreen();
+			displayError("invalid login");
+		});
+		socketio.on("invalid username/password", function(msg){
+			displayLoginScreen();
+			hideChatScreen();
+			displayError("Please enter a valid username/passowrd");
+		});
+		
+		socketio.on("updateUsers", function({usernamelist}){
+			updateUserList(usernamelist);
+		});
+		
+		function updateUserList(userlist){
+			var element = document.getElementById("userlist");
+			element.innerHTML = "";			
+			for(var user in userlist){
+				let child = document.createElement("button");
+				child.setAttribute("id", userlist[user]);
+				child.setAttribute("onclick", "openPrivateChat('" +userlist[user] +"')");
+				child.innerHTML = userlist[user];
+				//child.addEventListener("click", () => joinChatRoom(""+userlist[user]));
+				//child.addEventListener("click", () => alert(userlist[user]));
+				child.classList.add("list-of-usernames");
+				element.appendChild(child);
+			}
+		}
+
+		socketio.on("group message", function(msg, roomID){
+			displayGroupMessage(msg, roomID);
+		});
+		
+		socketio.on("register okay", function(){ //receive a “message” event
+			alert("Lab 4 - [Your name]: New registration added! Please login");
+			hideLoginScreen();
+			displayLoginScreen();
+	    });
+	    socketio.on("register failed", function(){ //receive a “message” event
+			alert("Lab 4 - [Your name]: CANNOT register new username '" + document.getElementById('newusername').value + "'. Please try again!" );
+			document.getElementById('newusername').value="";
+			document.getElementById('newpassword').value="";
+			document.getElementById('newusername').focus();
+	    });
+			
+		//send the user username info 
+		function sendLogin(){
+			var username = document.getElementById('username').value;
+			var password = document.getElementById('password').value;
+			if(!username || username.length<3){
+				alert('Invalid username');
+				username.value="";
+				username.focus();
+				return;
+			}
+			socketio.emit("login",username,password);
+		}
+		
+		function sendLogout(){
+			var username = document.getElementById('username').value;
+			var password = document.getElementById('password').value;
+			hideChatScreen();
+			displayLoginScreen();
+			socketio.emit("logout",username,password);
+		}
+
+		function addChatMember(){
+			var username = document.getElementById('nameinput').value; 
+			document.getElementById('nameinput').value="";
+			socketio.emit("add user", username);
+
+		}
+
+		//Screen functions 
+
+		function sendGroupChatExit(){
+			hideGroupChatScreen();			
+			displayChatScreen();
+			updateUserList();
+		}
+		
+		function sendPrivateChatExit(){
+			hidePrivateChatScreen();			
+			displayChatScreen();
+		}
+		
+		function openGroupChat(){
+			hideChatScreen();
+			displayGroupChatScreen();
+	
+		}
+		
+		function openPrivateChat(){
+			hideChatScreen();
+			displayPrivateChatScreen();
+	
+		}
+	
+		function displayPrivateChatScreen(){
+			var privateChatScreen = document.getElementById("PrivateChatScreen");
+			privateChatScreen.style.display = "block";
+		}
+		
+		function hidePrivateChatScreen(){
+			var privateChatScreen = document.getElementById("PriavteChatScreen");
+			privateChatScreen.style.display = "none";
+		}
+
+		function displayGroupChatScreen(){
+			var groupChatScreen = document.getElementById("GroupChatScreen");
+			groupChatScreen.style.display = "block";
+		}
+
+		function hideGroupChatScreen(){
+			var groupChatScreen = document.getElementById("GroupChatScreen");
+			groupChatScreen.style.display = "none";
+		}
+		function displayChatScreen(){
+			var ChatRoomScreen = document.getElementById("ChatRoomScreen");
+			ChatRoomScreen.style.display = "block";
+		}
+
+		function hideChatScreen(){
+			var ChatRoomScreen = document.getElementById("ChatRoomScreen");
+			ChatRoomScreen.style.display = "none";
+		}
+
+		function displayLoginScreen(){
+			var loginScreen = document.getElementById("loginScreen");
+			loginScreen.style.display = "block";
+		}
+		
+		function hideLoginScreen(){
+			var loginScreen = document.getElementById("loginScreen");
+			loginScreen.style.display = "none";
+		}
+
+		//button functions 
+
+		function makeGroupChat(){
+				//alert("1");
+				openGroupChat();
+				//alert("2");
+		}
+
+		function addMember(e){
+			if(e.keycode==13){
+				addChatMember();
+			}
+		}
+	
+
+		function exitGroupChat(e){
+			sendGroupChatExit();
+		}
+
+		function exitPrivateChat(e){
+			sendPrivateChatExit();
+		}
+
+
+		function pressLogin(e){
+	    		if(e.keyCode==13){
+				sendLogin();
+		}
+
+		function pressLogout(e){
+				sendLogout();
+			}
+		}		
+
+		function sendMessage(e){
+	    	    	if(e.keyCode==13){
+				sendToServer()
+	    	}
+		else {
+		        sendTyping();
+		     }
+		}
+		function sendTyping(){
+			socketio.emit("typing");
+			
+		}
+		function isTyping(msg){
+			document.getElementById("typing").innerHTML +=  msg + "<br>";
+			setTimeout(function(){document.getElementById("typing").innerHTML =  "<br>";},1000);
+		}	
+		
+		function displayMessage(msg) {
+			document.getElementById("messages").innerHTML +=  msg + "<br>";
+	    	}
+
+		/*function displayGroupMessage(msg, roomID){
+				document.getElementbyId("message").innerHTML + "br">;
+		}*/
+
+		/*function displayPrivateMessage(msg, roomID){
+				document.getElementbyId("message").innerHTML + "br">;
+		}*/
+
+		
+
+		function displayError(msg){
+			document.getElementById("errors").innerHTML +=  msg + "<br>";
+			setTimeout(function(){document.getElementById("errors").innerHTML =  "<br>";},10000);
+		}	
+			
+	    	function sendToServer() {
+			var message = document.getElementById('messageinput').value; 
+			document.getElementById('messageinput').value="";
+		   	socketio.emit("chat",message);
+	    }
+		/*function sendRoom() {
+			var message = document.getElementById('messageinput').value; 
+			document.getElementById('messageinput').value="";
+		   	socketio.emit("addChat", message, roomID);
+	    }*/
+		
+
+	</script>
+
+</head>
+
+<body>
+<h3>Messenger 0.2</h3>
+<p>Developed by Team 5 in CPS490</p>
+
+<div class="container login" style="display:block; width: 50%;height: 50%;" id="loginScreen">
+Please login: <br>
+	<div class="input-group">
+	<input type="text" id="username" placeholder="Username"> 
+	<input type="password" id="password" placeholder="Password" onkeypress="pressLogin(event)"> 
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" 
+		onclick="sendLogin()">Login
+	</button></span>
+	</div>
+	<div id="errors"></div>
+</div>
+
+<body>
+	
+<div class="container messages" style="display:none; width: 50%;height: 50%;" id="ChatRoomScreen">
+	<h4>Public Chat</h4>
+	<div class="input-group">
+	<input type="text" id="messageinput" class="form-control" placeholder="Type Message" onkeypress="sendMessage(event)">
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="sendToServer()">SEND
+	</button></span>
+	</div>
+	<input type="text" id="nameinput" class="form-control" placeholder="Type User" onkeypress="addMember(event)">
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="addChatMember()">Add
+	</button></span>
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="sendLogout()">Back</button>  
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="makeGroupChat()">Start a Group Chat</button>
+	<br>
+	<br> 
+	Online: <div id="userlist"></div>
+	<hr>
+	Messages: <br>
+	<div id="messages"></div>
+	</span></div>
+
+	<div id="typing"> </div>
+</div>
+
+<body>
+
+<div class="container messages" style="display:none; width: 50%;height: 50%;" id="PrivateChatScreen">
+	<h3>Private Chat</h3>
+	<div class="input-group">
+	<input type="text" id="messageinput" class="form-control" placeholder="Type Message" onkeypress="sendMessage(event)">
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="sendToServer()">SEND
+	</button></span>
+	</div>
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="exitPrivateChat()">Back</button>
+	<br>
+	<br> 
+	Party People's: <div id="userlist"></div>
+	<hr>
+	Messages: <br>
+	<div id="messages"></div>
+	</span></div>
+
+	<div id="typing"> </div>
+</div>
+
+<body>
+
+<div class="container messages" style="display:none; width: 50%;height: 50%;" id="GroupChatScreen">
+	<h3>Group Chat</h3>
+	<div class="input-group">
+	<input type="text" id="messageinput" class="form-control" placeholder="Type Message" onkeypress="sendMessage(event)">
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="sendToServer()">SEND
+	</button></span>
+	</div>
+	<input type="text" id="nameinput" class="form-control" placeholder="Type User" onkeypress="addMember(event)">
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="addChatMember()">Add
+	</button></span>
+	<span class="input-group-btn"><button class="btn btn-primary" type="button" onclick="exitGroupChat()">Back</button>
+	<br>
+	<br> 
+	Chat Memebrs<div id="GroupChat"></div>
+	<hr>
+	Messages: <br>
+	<div id="messages"></div>
+	</span></div>
+
+	<div id="typing"> </div>
+
+</div>	
+	
+</div>
+</body>
+</html>

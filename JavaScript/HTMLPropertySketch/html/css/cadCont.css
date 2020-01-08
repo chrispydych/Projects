@@ -1,0 +1,41 @@
+#canvasContainer {
+
+
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.canvas-container {
+  color: Black;
+  font-weight: bold;
+  font-family: Helvetica, Arial, Sans;
+  min-width: 700px;
+
+  width: 100%;
+
+}
+
+#header {
+  margin: 5px; /* not inherited */
+}
+
+#viewerContext {
+  margin: 5px; /* not inherited */
+  border: thin solid gray; /* not inherited */
+  padding: 5px; /* not inherited */
+
+  background: white;
+  width: 95%;
+  height: 95%;
+
+  top: 0px;
+  bottom: 0px;
+}
+
+canvas {
+  margin: 0px; /* not inherited */
+  border: 5px none gray; /* not inherited */
+  padding: 0px; /* not inherited */
+
+  background-color: white;
+}

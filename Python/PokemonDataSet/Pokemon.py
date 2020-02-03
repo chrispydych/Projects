@@ -3,7 +3,7 @@ import matplotlib as plt
 import seaborn as sns
 
 #Read the Dataset
-df = pd.read_csv('Pokemon.csv', index_col=0)
+df = pd.read_csv(r'Pokemon.csv', index_col=0)
 #Display the first 5 observations
 df.head()
 #Scatterplot of attack and defense

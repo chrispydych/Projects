@@ -14,3 +14,19 @@ var server = http.createServer(function (request, response) {
 });
 
 server.listen(8080);
+
+function planet(){};
+
+function drawPlanet(){
+    var canvas = document.getElementById('circle');
+    if(canvas.getContext){
+        var ctx = canvas.getContext('2d');
+        var X = Canvas.width/2;
+        var Y = canvas.height/2;
+        var R = 45;
+    }
+};
+
+
+
+

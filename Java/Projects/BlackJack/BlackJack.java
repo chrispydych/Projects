@@ -12,12 +12,12 @@ import java.util.Scanner;
  */
     public class Blackjack {
     
-       public static void main(String[] args) {
+       public static void main(final String[] args) {
        
           int money;          // Amount of money the user has.
           int bet;            // Amount user bets on a game.
           boolean userWins;   // Did the user win the game?
-          Scanner in = new Scanner(System.in);
+          final Scanner in = new Scanner(System.in);
           
           System.out.println("Welcome to the game of blackjack.");
           System.out.println();
@@ -137,7 +137,7 @@ import java.util.Scanner;
                }
                else {  // userAction is 'H'.  Give the user a card.  
                        // If the user goes over 21, the user loses.
-                   Card newCard = deck.dealCard();
+                   final Card newCard = deck.dealCard();
                    userHand.addCard(newCard);
                    TextIO.putln();
                    TextIO.putln("User hits.");
@@ -165,7 +165,7 @@ import java.util.Scanner;
           TextIO.putln("    " + dealerHand.getCard(0));
           TextIO.putln("    " + dealerHand.getCard(1));
           while (dealerHand.getBlackjackValue() <= 16) {
-             Card newCard = deck.dealCard();
+             final Card newCard = deck.dealCard();
              TextIO.putln("Dealer hits and gets the " + newCard);
              dealerHand.addCard(newCard);
              if (dealerHand.getBlackjackValue() > 21) {

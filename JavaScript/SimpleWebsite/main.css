@@ -14,8 +14,32 @@ li{
     list-style: square;
 }
 
+.light-theme{
+    --bg: var(--green);
+    --fontColor: var(--black);
+}
+
+.dark-theme{
+    --bg: var(--black);
+    --fontColor:var(--green);
+}
+
 #date {
     font-size: 12px;
     font-style: italic;
     font-weight: bold;
+}
+
+:root{
+    --green: #00FF00;
+    --white: #ffffff;
+    --black: #000000;
+}
+*{
+    color: var(--fontColor);
+    font-family: Helvetica;
+}
+
+body{
+    background: var(--bg);
 }

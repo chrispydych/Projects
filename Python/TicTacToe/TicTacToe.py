@@ -1,23 +1,29 @@
-######################################################################
-#
-def findComputerMove(aBoard, depth, isHuman=False):
-    abresult = alphabeta(aBoard, depth, -10, 10, isHuman)
-    if abresult[1] != None:
-        exit(abresult[1])
-    else:
-        exit(-1)
-    return abresult
-if __name__ == '__main__':
-    print ('This module is not intended for use as "main".')
+#Simple Tic Tac Toe Game
 
-from AbstractAlphaBeta import *
+import random
 
 
-if __name__ == '__main__':
-   aBoard = TicTacToeBoard()
-   while not aBoard.isOver():
-      aBoard, score = findComputerMove(aBoard, 1, isHuman=True)
-      aBoard.printBoard()
-      aBoard, score = findComputerMove(aBoard, 1, isHuman=False)
-      aBoard.printBoard()
+print("Welcome to Tic Tac Toe")
 
+print("We will flip a coin to see who goes first")
+
+coin_choice = input("Choose heads or tails: ")
+
+coin = random.randrange(2)
+
+if(coin_choice == "heads" & coin == 1):
+    print("You go first!")
+elif(coin_choice == "heads" & coin == 1):
+    print("Computer goes first!")
+elif(coin_choice == "tails" & coin == 0):
+    print("You go first!")
+else:
+    print("Computer goes first!")
+
+
+if(coin == 0):
+    print("Tails")
+else:
+    print("Heads")
+
+print(coin)
